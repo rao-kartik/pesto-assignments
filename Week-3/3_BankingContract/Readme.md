@@ -7,7 +7,7 @@ Design and implement a smart contract for a Banking system. The smart contract s
 3. Transfer funds to other accounts
 4. Check their account balance
 
-#### Requirements
+### Requirements
 1. The smart contract should have a function to deposit funds into the user's account
 2. The smart contract should have a function to withdraw funds from the user's account
 3. The smart contract should have a function to transfer funds from one account to another account

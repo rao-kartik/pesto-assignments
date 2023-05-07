@@ -5,6 +5,7 @@ pragma solidity ^0.8.16;
  * @title Voting
  * @author Kartik Yadav
  * @notice Contract to held a voting round
+ * @dev valid for only one round of voting
  */
 
 contract oneVotingRound {
@@ -97,7 +98,10 @@ contract oneVotingRound {
     // checking if voting has started
     require(votingInProgress, "Voting not yet started");
     // checking if voting sign is present
-    require(_voteTo != address(0), "Invalid candidate voting sign");
+    require(
+      _voteTo != address(0) && CandidatesRecord[_voteTo].isRegistered,
+      "Not a Registered Candidate"
+    );
     // checking if already voted
     require(!hasVoted[msg.sender], "You have already voted");
 

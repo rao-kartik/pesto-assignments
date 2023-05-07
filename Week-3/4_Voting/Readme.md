@@ -22,4 +22,8 @@ Main features:
 4. Voting can be started if there are atleast two candidates
 5. Each voter able to vote only once
 6. Voters should be able to vote for registered candidates
-7. Winner declared at the end of voting
+7. Voters can't vote to unregisterd candidates
+8. Winner declared at the end of voting
+
+## Multiple voting rounds
+-> Same features as in one voting round with flexibility to conduct multiple voting rounds.

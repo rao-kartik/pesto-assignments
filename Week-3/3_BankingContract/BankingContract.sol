@@ -1,69 +1,69 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
+/**
+ * @title Banking Contract
+ * @author Kartik Yadav
+ * @notice Contract for banking system. User is able to deposit, check, withdraw and transfer their balance
+ */
+
 contract UserAccount {
-    struct User {
-        address userAddress;
-        uint balance;
-    }
+  mapping(address => uint256) userRecords;
 
-    mapping (address => User) userRecords;
+  /**
+   * @custom:modifier to check if the contract has sufficient funds
+   */
+  modifier checkContractFunds(uint256 _amount) {
+    require(
+      address(this).balance >= _amount,
+      "Contract doesn't have sufficient balance"
+    );
+    _;
+  }
 
-    modifier checkAuthorisation {
-      User memory user = userRecords[msg.sender];
-      require(user.userAddress != address(0), "Unauthorised user");
-      _;
-    }
+  /**
+   * @notice add funds
+   */
+  function depositBal() external payable {
+    require(msg.value > 0, "Invalid amount");
 
-    // with this function user can only deposit amount to its own account
-    function depositBal() external payable {
-        require(msg.value > 0, "Invalid amount");
+    userRecords[msg.sender] += msg.value;
+  }
 
-        // checking if user is present in user Records
-        User memory user = userRecords[msg.sender];
-        if(user.userAddress == address(0)){
-            // if not then creating a new user
-            User memory newUser;
-            newUser.userAddress = msg.sender;
-            newUser.balance = msg.value;
+  /**
+   * @notice check the balance of user in contract
+   */
+  function checkBalance() external view returns (uint256) {
+    return userRecords[msg.sender];
+  }
 
-            userRecords[msg.sender] = newUser;
-        }else {
-            // else adding funds to user account
-            userRecords[msg.sender].balance = user.balance + msg.value;
-        }
-    }
+  /**
+   * @notice to ithdrwa funds
+   * @param _amount balance to withdraw
+   */
+  function withdrawFunds(uint256 _amount) external checkContractFunds(_amount) {
+    // checking if user balance is sufficient or not
+    require(userRecords[msg.sender] >= _amount, "Insufficient funds");
+    userRecords[msg.sender] -= _amount;
+    payable(msg.sender).transfer(_amount);
+  }
 
-    function checkBalance() external view checkAuthorisation returns(uint256) {
-        User memory user = userRecords[msg.sender];
-        return user.balance;
-    }
+  /**
+   * @notice to transfer funds from one address to other within the contract
+   * @param _address addressof the receiver
+   * @param _amount balance to be transferred
+   */
+  function transferFunds(address _address, uint256 _amount)
+    external
+    checkContractFunds(_amount)
+  {
+    require(_address != address(0), "Invalid address");
 
-    function withdrawFunds(uint _amount) external checkAuthorisation {
-        // checking if contract balance is sufficient or not
-        require(address(this).balance >= _amount, "Insufficient balance");
-        User memory user = userRecords[msg.sender];
-        // checking if user balance is sufficient or not
-        require(user.balance >= _amount, "Insufficient funds");
-        userRecords[msg.sender].balance = user.balance - _amount; 
-        payable(msg.sender).transfer(_amount);
-    }
+    require(userRecords[msg.sender] >= _amount, "Insufficient funds");
 
-    function transferFunds(address _address, uint256 _amount) external {
-        require(_address != address(0), "Invalid address");
-        require(_address != msg.sender, "Cannot transfer to self account");
-        // checking if contract balance is sufficient or not
-        require(address(this).balance >= _amount, "Insufficient funds");
-        User memory sender = userRecords[msg.sender];
-        require(sender.balance >= _amount, "Insufficient funds");
+    userRecords[msg.sender] -= _amount;
 
-        // checking if _address is present in user records
-        User memory receiver = userRecords[_address];
-        require(receiver.userAddress != address(0), "Invalid address");
-        userRecords[msg.sender].balance = sender.balance - _amount;
-
-        // if reciever is in contract user records adding funds to the account
-        userRecords[_address].balance = receiver.balance + _amount;
-        
-    }
+    // if reciever is in contract user records adding funds to the account
+    userRecords[_address] += _amount;
+  }
 }

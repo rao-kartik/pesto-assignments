@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.16;
 
+/**
+ * @title Voting
+ * @author Kartik Yadav
+ * @notice Contract to held a voting round
+ */
+
 contract oneVotingRound {
   address immutable admin;
   bool votingInProgress;

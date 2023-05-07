@@ -21,4 +21,5 @@ Main features:
 3. Candidate can't register twice
 4. Voting can be started if there are atleast two candidates
 5. Each voter able to vote only once
-6. Winner declared at the end of voting
+6. Voters should be able to vote for registered candidates
+7. Winner declared at the end of voting

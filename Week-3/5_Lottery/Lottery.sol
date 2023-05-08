@@ -1,5 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.7.0 <0.9.0;
+pragma solidity ^0.8.17;
+
+/**
+ * @title Lottery
+ * @author Kartik Yadav
+ * @notice Contract to organise a lottery
+ */
 
 contract Lottery {
     
@@ -43,7 +49,7 @@ contract Lottery {
 
         address winner = participants[random()];
 
-        previousWinnersBal[winner] = winningAmt;
+        previousWinnersBal[winner] += winningAmt;
         
         emit winnerDecided(winner);
 
@@ -53,6 +59,6 @@ contract Lottery {
 
     function random() private view returns(uint) {
         // Below function generates pseudorandom uint based on admin and block.timestamp
-        return uint(keccak256(abi.encodePacked(owner, block.timestamp))) % participants.length - 1;
+        return uint(keccak256(abi.encodePacked(owner, block.timestamp))) % participants.length;
     }
 }
